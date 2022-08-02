@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgresql-b:
+    build: main
+    env_file:
+      - ./main/main.env
+    container_name: postgresql-b
+    restart: always
+    ports:
+      - 6432:5432
+    volumes:
+      - ./main/data:/var/lib/postgresql/data
+
+  postgresql-b1:
+    build: shard-1
+    env_file:
+      - ./shard-1/shard.env
+    container_name: postgresql-b1
+    restart: always
+    ports:
+      - 7432:5432
+    depends_on:
+      - postgresql-b
+    volumes:
+      - ./shard-1/data:/var/lib/postgresql/data
+
+  postgresql-b2:
+    build: shard-2
+    env_file:
+      - ./shard-2/shard.env
+    container_name: postgresql-b2
+    restart: always
+    ports:
+      - 8432:5432
+    depends_on:
+      - postgresql-b
+    volumes:
+      - ./shard-2/data:/var/lib/postgresql/data
